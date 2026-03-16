@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
+import os
 import re
+import tempfile
 from pathlib import Path
 
 from config import settings
@@ -12,8 +14,12 @@ from state import store
 class RagService:
     def __init__(self, embedding_service) -> None:
         self.embedding_service = embedding_service
-        self.index_dir = Path(__file__).resolve().parent.parent / "data" / "vector_index"
-        self.index_dir.mkdir(parents=True, exist_ok=True)
+        self.index_dir = self._resolve_index_dir()
+        self._disk_cache_enabled = True
+        try:
+            self.index_dir.mkdir(parents=True, exist_ok=True)
+        except OSError:
+            self._disk_cache_enabled = False
         self.index_path = self.index_dir / "policy_chunks.json"
         self._chunk_cache: list[dict] = []
         self._ensure_index()
@@ -58,7 +64,7 @@ class RagService:
 
     def _ensure_index(self) -> None:
         current_signature = self._policy_signature()
-        if self.index_path.exists():
+        if self._disk_cache_enabled and self.index_path.exists():
             with self.index_path.open("r", encoding="utf-8") as file:
                 payload = json.load(file)
             if payload.get("signature") == current_signature:
@@ -66,14 +72,18 @@ class RagService:
                 return
 
         chunks = self._build_chunk_records()
-        payload = {
-            "signature": current_signature,
-            "embedding_provider": self.embedding_service.provider,
-            "embedding_model": settings.embedding_model,
-            "chunks": chunks,
-        }
-        with self.index_path.open("w", encoding="utf-8") as file:
-            json.dump(payload, file, indent=2)
+        if self._disk_cache_enabled:
+            payload = {
+                "signature": current_signature,
+                "embedding_provider": self.embedding_service.provider,
+                "embedding_model": settings.embedding_model,
+                "chunks": chunks,
+            }
+            try:
+                with self.index_path.open("w", encoding="utf-8") as file:
+                    json.dump(payload, file, indent=2)
+            except OSError:
+                self._disk_cache_enabled = False
         self._chunk_cache = chunks
 
     def _build_chunk_records(self) -> list[dict]:
@@ -131,3 +141,8 @@ class RagService:
 
     def _tokenize(self, text: str) -> list[str]:
         return re.findall(r"[a-z0-9]+", text.lower())
+
+    def _resolve_index_dir(self) -> Path:
+        if os.getenv("VERCEL"):
+            return Path(tempfile.gettempdir()) / "dealflow_vector_index"
+        return Path(__file__).resolve().parent.parent / "data" / "vector_index"
