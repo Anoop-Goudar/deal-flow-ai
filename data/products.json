@@ -1,0 +1,54 @@
+[
+  {
+    "policy_id": "vehicle-loan-policy",
+    "product": "Vehicle Loan",
+    "title": "Commercial Vehicle Loan Policy",
+    "category": "lending",
+    "policy_file": "vehicle_loan.txt",
+    "min_business_years": 2,
+    "min_turnover": 2000000,
+    "required_collateral": true,
+    "requires_import_export_activity": false,
+    "assigned_agent": "loan_specialist",
+    "next_action": "Schedule vehicle loan consultation"
+  },
+  {
+    "policy_id": "equipment-loan-policy",
+    "product": "Equipment Loan",
+    "title": "Business Equipment Loan Policy",
+    "category": "lending",
+    "policy_file": "equipment_loan.txt",
+    "min_business_years": 2,
+    "min_turnover": 1500000,
+    "required_collateral": false,
+    "requires_import_export_activity": false,
+    "assigned_agent": "loan_specialist",
+    "next_action": "Assess equipment finance requirement"
+  },
+  {
+    "policy_id": "credit-card-gold-policy",
+    "product": "Business Credit Card",
+    "title": "Business Credit Card Gold Policy",
+    "category": "cards",
+    "policy_file": "credit_card_gold.txt",
+    "min_business_years": 1,
+    "min_turnover": 500000,
+    "required_collateral": false,
+    "requires_import_export_activity": false,
+    "assigned_agent": "credit_card_specialist",
+    "next_action": "Prepare business credit card recommendation call"
+  },
+  {
+    "policy_id": "trade-finance-policy",
+    "product": "Trade Finance",
+    "title": "Trade Finance Policy",
+    "category": "trade",
+    "policy_file": "trade_finance.txt",
+    "min_business_years": 2,
+    "min_turnover": 1000000,
+    "required_collateral": false,
+    "requires_import_export_activity": true,
+    "assigned_agent": "trade_finance_specialist",
+    "next_action": "Review trade flows and propose facilities"
+  }
+]

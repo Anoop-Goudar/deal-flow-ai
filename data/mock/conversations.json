@@ -1,0 +1,43 @@
+{
+  "C101": [
+    {
+      "timestamp": "2026-03-16T09:00:00Z",
+      "actor": "client",
+      "message": "We want to expand our truck fleet this quarter and support more export routes to Europe."
+    },
+    {
+      "timestamp": "2026-03-16T09:05:00Z",
+      "actor": "relationship_manager",
+      "message": "That sounds promising. Please confirm your turnover, years in operation, and whether you can provide collateral."
+    },
+    {
+      "timestamp": "2026-03-16T09:08:00Z",
+      "actor": "client",
+      "message": "Our turnover is $8M, we have operated for 5 years, and the vehicles can be used as collateral."
+    }
+  ],
+  "C102": [
+    {
+      "timestamp": "2026-03-16T08:30:00Z",
+      "actor": "client",
+      "message": "Our team travels often and we need better card limits for staff purchases."
+    },
+    {
+      "timestamp": "2026-03-16T08:34:00Z",
+      "actor": "relationship_manager",
+      "message": "Please share your annual turnover and how long the business has been operating."
+    }
+  ],
+  "C103": [
+    {
+      "timestamp": "2026-03-16T11:00:00Z",
+      "actor": "client",
+      "message": "We are planning to buy warehouse equipment and new machinery for the next production line."
+    },
+    {
+      "timestamp": "2026-03-16T11:03:00Z",
+      "actor": "relationship_manager",
+      "message": "We can review equipment financing. Please share your annual revenue and years in business."
+    }
+  ]
+}

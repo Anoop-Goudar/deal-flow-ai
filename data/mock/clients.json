@@ -1,0 +1,42 @@
+[
+  {
+    "client_id": "C101",
+    "name": "Orion Logistics",
+    "type": "business",
+    "business_turnover": 8000000,
+    "business_years": 5,
+    "annual_revenue": 8000000,
+    "collateral_available": true,
+    "import_export_activity": true,
+    "notes": [
+      "Existing logistics business with planned fleet growth",
+      "Has export-linked operations"
+    ]
+  },
+  {
+    "client_id": "C102",
+    "name": "Nova Retail",
+    "type": "business",
+    "business_turnover": 1200000,
+    "business_years": 1,
+    "annual_revenue": 1200000,
+    "collateral_available": false,
+    "import_export_activity": false,
+    "notes": [
+      "Growing retail business with staff travel needs"
+    ]
+  },
+  {
+    "client_id": "C103",
+    "name": "Atlas Manufacturing",
+    "type": "business",
+    "business_turnover": 2400000,
+    "business_years": 3,
+    "annual_revenue": 2400000,
+    "collateral_available": true,
+    "import_export_activity": false,
+    "notes": [
+      "Seeking machinery financing for warehouse expansion"
+    ]
+  }
+]

@@ -1,0 +1,61 @@
+{
+  "client_id": "C101",
+  "summary": "client: We want to expand our truck fleet this quarter and support more export routes to Europe. client: Our turnover is $8M, we have operated for 5 years, and the vehicles can be used as collateral.",
+  "confidence": "high",
+  "detected_needs": [
+    "Vehicle Loan",
+    "Trade Finance"
+  ],
+  "extracted_attributes": {
+    "business_turnover": 8000000,
+    "business_years": 5,
+    "annual_revenue": 8000000,
+    "monthly_salary": null,
+    "collateral_available": true,
+    "import_export_activity": true,
+    "notes": [
+      "Client mentioned fleet expansion",
+      "Client mentioned export or import activity"
+    ]
+  },
+  "recommendations": [
+    {
+      "product": "Vehicle Loan",
+      "eligibility": "Eligible",
+      "assigned_agent": "loan_specialist",
+      "rationale": "conversation signals: expand our fleet, export, fleet; business operating for 5 years; turnover captured at 8,000,000",
+      "next_action": "Schedule vehicle loan consultation",
+      "confidence": 0.91,
+      "policy_excerpt": "Commercial vehicle finance is available to established businesses expanding or replacing fleet capacity. The business should have operated for more than 2 years and show annual turnover above 2,000,000.",
+      "missing_fields": []
+    },
+    {
+      "product": "Trade Finance",
+      "eligibility": "Eligible",
+      "assigned_agent": "trade_finance_specialist",
+      "rationale": "conversation signals: export, europe; business operating for 5 years; turnover captured at 8,000,000; policy expects import or export activity",
+      "next_action": "Review trade flows and propose facilities",
+      "confidence": 0.91,
+      "policy_excerpt": "Trade finance is intended for businesses with import or export activity, supplier settlements, or cross-border working capital needs. The business should have operated for more than 2 years and maintain annual turnover above 1,000,000.",
+      "missing_fields": []
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T101",
+      "client_id": "C101",
+      "product": "Vehicle Loan",
+      "assigned_to": "loan_specialist",
+      "action": "Schedule vehicle loan consultation",
+      "status": "pending"
+    },
+    {
+      "task_id": "T102",
+      "client_id": "C101",
+      "product": "Trade Finance",
+      "assigned_to": "trade_finance_specialist",
+      "action": "Review trade flows and propose facilities",
+      "status": "pending"
+    }
+  ]
+}
