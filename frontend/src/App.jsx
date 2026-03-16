@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "./api";
 
-const pages = ["Agent Dashboard", "Client Portal", "Admin Page"];
+const pages = ["Agent Dashboard", "Client Portal", "Admin Page", "POC Brief"];
 
 export default function App() {
   const [page, setPage] = useState("Agent Dashboard");
@@ -292,6 +292,8 @@ export default function App() {
             busy={busy}
           />
         ) : null}
+
+        {!loading && page === "POC Brief" ? <PocBrief /> : null}
       </main>
     </div>
   );
@@ -576,6 +578,158 @@ function AdminPage({ conversationJson, setConversationJson, pipelineResult, onRu
         <pre className="result-viewer">
           {pipelineResult ? JSON.stringify(pipelineResult, null, 2) : "No pipeline result yet."}
         </pre>
+      </div>
+    </section>
+  );
+}
+
+function PocBrief() {
+  const appUrl = typeof window !== "undefined" ? window.location.origin : "https://deal-flow-ai-frontend.vercel.app";
+
+  return (
+    <section className="single-page">
+      <div className="panel brief-hero stake-hero">
+        <div className="stake-hero-grid">
+          <div>
+            <p className="eyebrow">Stakeholder Demo</p>
+            <h3>DealFlow AI</h3>
+            <p className="brief-intro">
+              An AI-assisted relationship banking copilot that converts client conversations into product
+              recommendations, eligibility decisions, and routed next steps.
+            </p>
+          </div>
+          <div className="brief-url-card">
+            <span>Live App URL</span>
+            <strong>{appUrl}</strong>
+          </div>
+        </div>
+
+        <div className="stake-pill-row">
+          <span className="stake-pill">Conversation Intelligence</span>
+          <span className="stake-pill">Policy-Aware Recommendations</span>
+          <span className="stake-pill">Eligibility Checks</span>
+          <span className="stake-pill">Task Routing</span>
+        </div>
+      </div>
+
+      <div className="brief-grid">
+        <div className="panel">
+          <p className="eyebrow">The Problem</p>
+          <h3>What We Are Solving</h3>
+          <ul className="brief-list">
+            <li>Relationship managers often have to manually interpret messy client conversations.</li>
+            <li>Product matching and policy checks are slow and inconsistent.</li>
+            <li>Follow-up actions are often delayed or routed manually.</li>
+            <li>Client intent, eligibility, and next steps are rarely visible in one place.</li>
+          </ul>
+        </div>
+
+        <div className="panel">
+          <p className="eyebrow">The Outcome</p>
+          <h3>What This POC Demonstrates</h3>
+          <ul className="brief-list">
+            <li>The app interprets the conversation and detects likely banking needs.</li>
+            <li>It retrieves policy context before forming a recommendation.</li>
+            <li>It checks whether the client is eligible, not eligible, or incomplete.</li>
+            <li>It produces the next recommended action and routes a task to the right role.</li>
+            <li>It suggests agent replies that reflect the latest conversation state.</li>
+          </ul>
+        </div>
+
+        <div className="panel wide-brief-panel">
+          <p className="eyebrow">Live Demo Story</p>
+          <h3>Best Stakeholder Walkthrough</h3>
+          <div className="storyline">
+            <div className="story-step">
+              <span>1</span>
+              <div>
+                <strong>Client expresses a financing need</strong>
+                <p>Example: fleet expansion, export support, or business card limits.</p>
+              </div>
+            </div>
+            <div className="story-step">
+              <span>2</span>
+              <div>
+                <strong>DealFlow AI interprets the conversation</strong>
+                <p>It detects likely products and retrieves the relevant policy match.</p>
+              </div>
+            </div>
+            <div className="story-step">
+              <span>3</span>
+              <div>
+                <strong>The app evaluates eligibility</strong>
+                <p>It compares client facts such as turnover, business age, collateral, and trade activity.</p>
+              </div>
+            </div>
+            <div className="story-step">
+              <span>4</span>
+              <div>
+                <strong>Next action is generated</strong>
+                <p>Specialist routing or relationship-manager follow-up is created automatically.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="panel">
+          <p className="eyebrow">What To Show</p>
+          <h3>High-Impact Screens</h3>
+          <ul className="brief-list">
+            <li>
+              <strong>Agent Dashboard</strong>: the main demo surface showing summary, recommendations, suggested
+              replies, and task routing.
+            </li>
+            <li>
+              <strong>Client Portal</strong>: demonstrates how client messages change the decisioning in real time.
+            </li>
+            <li>
+              <strong>Admin Page</strong>: useful for resetting the demo and rerunning analysis.
+            </li>
+          </ul>
+        </div>
+
+        <div className="panel">
+          <p className="eyebrow">Suggested Scenarios</p>
+          <h3>Demo Prompts</h3>
+          <ul className="brief-list">
+            <li>
+              <strong>Eligible case</strong>: “Our turnover is $8M, we have operated for 5 years, and the vehicles
+              can be used as collateral.”
+            </li>
+            <li>
+              <strong>Multi-product case</strong>: “We also support export routes to Europe and need help with
+              trade-related payments.”
+            </li>
+            <li>
+              <strong>Ineligible case</strong>: “Actually, we have only been operating for 1 year.”
+            </li>
+            <li>
+              <strong>Criteria question</strong>: “What’s the criteria?”
+            </li>
+          </ul>
+        </div>
+
+        <div className="panel">
+          <p className="eyebrow">What Good Looks Like</p>
+          <h3>Success Signals</h3>
+          <ul className="brief-list">
+            <li>The recommendation feels believable and grounded in policy.</li>
+            <li>The eligibility result changes when the client shares new facts.</li>
+            <li>The next action changes when the case becomes incomplete or ineligible.</li>
+            <li>The suggested replies feel like a practical banker aid rather than a generic chatbot.</li>
+          </ul>
+        </div>
+
+        <div className="panel">
+          <p className="eyebrow">Current Scope</p>
+          <h3>POC Boundaries</h3>
+          <ul className="brief-list">
+            <li>This is an internal proof of concept, not a production system.</li>
+            <li>Application state is in-memory and may reset across cold starts or redeploys.</li>
+            <li>Authentication and persistent storage are not yet included.</li>
+            <li>The value being tested is workflow intelligence, not production hardening.</li>
+          </ul>
+        </div>
       </div>
     </section>
   );

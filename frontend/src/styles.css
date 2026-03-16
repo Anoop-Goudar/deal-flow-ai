@@ -333,6 +333,127 @@ button:disabled {
   gap: 1rem;
 }
 
+.brief-hero {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.stake-hero {
+  background:
+    radial-gradient(circle at top right, rgba(182, 111, 58, 0.12), transparent 28%),
+    linear-gradient(180deg, #fffbf6 0%, #f9f2e8 100%);
+}
+
+.stake-hero-grid {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: start;
+}
+
+.brief-intro {
+  max-width: 52rem;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+.brief-url-card {
+  display: inline-grid;
+  gap: 0.18rem;
+  padding: 0.9rem 1rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid var(--line);
+  width: fit-content;
+}
+
+.brief-url-card span {
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+
+.stake-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.stake-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.42rem 0.78rem;
+  border-radius: 999px;
+  background: rgba(52, 86, 117, 0.08);
+  color: var(--accent-2);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.brief-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.wide-brief-panel {
+  grid-column: 1 / -1;
+}
+
+.brief-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.brief-list li {
+  color: var(--ink);
+}
+
+.brief-list.ordered {
+  padding-left: 1.25rem;
+}
+
+.storyline {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.story-step {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 0.85rem;
+  align-items: start;
+  padding: 0.9rem 0.95rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.64);
+  border: 1px solid var(--line);
+}
+
+.story-step span {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--ink);
+  color: white;
+  font-weight: 700;
+}
+
+.story-step strong {
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.story-step p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
 .admin-layout {
   grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
 }
@@ -648,8 +769,13 @@ ul {
 @media (max-width: 1180px) {
   .app-shell,
   .workspace-grid,
-  .admin-layout {
+  .admin-layout,
+  .brief-grid {
     grid-template-columns: 1fr;
+  }
+
+  .stake-hero-grid {
+    flex-direction: column;
   }
 
   .sidebar {
