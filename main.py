@@ -4,12 +4,14 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import settings
-from dependencies import conversation_service, pipeline_service, reply_suggestion_service
+from dependencies import conversation_service, pipeline_service, policy_service, reply_suggestion_service
 from models import (
     AddMessageRequest,
     AddMessageResponse,
+    PolicyUpdateResponse,
     RunPipelineRequest,
     SuggestedReply,
+    UpdatePolicyRequest,
     UpdateTaskStatusRequest,
     WorkspaceData,
 )
@@ -138,6 +140,30 @@ def get_tasks():
 @app.get("/recommendations")
 def get_recommendations():
     return list(store.recommendations.values())
+
+
+@app.get("/policies")
+def get_policies():
+    return policy_service.list_policies()
+
+
+@app.put("/policies/{policy_id}", response_model=PolicyUpdateResponse)
+def update_policy(policy_id: str, request: UpdatePolicyRequest):
+    try:
+        policy, persisted = policy_service.update_policy(policy_id, request)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    return PolicyUpdateResponse(
+        policy=policy,
+        reindexed=True,
+        persisted=persisted,
+        message=(
+            "Policy updated and RAG index refreshed."
+            if persisted
+            else "Policy updated for the current session and RAG index refreshed."
+        ),
+    )
 
 
 @app.patch("/tasks/{task_id}")

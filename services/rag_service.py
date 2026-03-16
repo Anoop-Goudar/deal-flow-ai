@@ -62,6 +62,15 @@ class RagService:
                 return policy
         return None
 
+    def rebuild_index(self) -> None:
+        self._chunk_cache = []
+        if self._disk_cache_enabled and self.index_path.exists():
+            try:
+                self.index_path.unlink()
+            except OSError:
+                self._disk_cache_enabled = False
+        self._ensure_index()
+
     def _ensure_index(self) -> None:
         current_signature = self._policy_signature()
         if self._disk_cache_enabled and self.index_path.exists():

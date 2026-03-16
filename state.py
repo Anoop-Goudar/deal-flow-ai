@@ -51,5 +51,13 @@ class InMemoryStateStore:
                 return updated
         raise ValueError(f"Unknown task: {task_id}")
 
+    def update_policy(self, policy_id: str, **attributes):
+        for index, policy in enumerate(self.policies):
+            if policy.policy_id == policy_id:
+                updated = policy.model_copy(update=attributes)
+                self.policies[index] = updated
+                return updated
+        raise ValueError(f"Unknown policy: {policy_id}")
+
 
 store = InMemoryStateStore()

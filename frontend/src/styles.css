@@ -49,6 +49,10 @@ select {
   font: inherit;
 }
 
+input {
+  font: inherit;
+}
+
 button {
   border: 0;
   border-radius: 999px;
@@ -602,6 +606,17 @@ textarea {
   color: var(--ink);
 }
 
+input,
+select {
+  width: 100%;
+  min-width: 0;
+  padding: 0.8rem 0.9rem;
+  border-radius: 16px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.76);
+  color: var(--ink);
+}
+
 .summary-card,
 .summary-banner,
 .snapshot-panel {
@@ -756,7 +771,8 @@ textarea {
 
 .loading-panel,
 .empty-state,
-.error-banner {
+.error-banner,
+.notice-banner {
   border-radius: 18px;
   padding: 0.9rem 1rem;
   margin-bottom: 1rem;
@@ -772,6 +788,12 @@ textarea {
   background: #f4e1df;
   color: #7f342c;
   border: 1px solid rgba(127, 52, 44, 0.14);
+}
+
+.notice-banner {
+  background: #e6f0e7;
+  color: #355843;
+  border: 1px solid rgba(53, 88, 67, 0.14);
 }
 
 .json-label {
@@ -799,11 +821,107 @@ ul {
   padding-left: 1rem;
 }
 
+.policy-layout {
+  grid-template-columns: minmax(260px, 0.68fr) minmax(0, 1.32fr);
+}
+
+.policy-sidebar-panel {
+  align-self: start;
+}
+
+.policy-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.policy-button {
+  display: grid;
+  gap: 0.2rem;
+  width: 100%;
+  text-align: left;
+  border-radius: 18px;
+  padding: 0.9rem 1rem;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid transparent;
+}
+
+.policy-button.active {
+  background: var(--panel-solid);
+  border-color: rgba(182, 111, 58, 0.22);
+}
+
+.policy-button strong {
+  font-size: 1rem;
+}
+
+.policy-button span {
+  color: var(--ink-soft);
+}
+
+.policy-editor {
+  display: grid;
+  gap: 1rem;
+}
+
+.policy-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.policy-grid label,
+.policy-text-label {
+  display: grid;
+  gap: 0.38rem;
+}
+
+.policy-grid label span,
+.policy-text-label span {
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+
+.toggle-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.toggle-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.82rem 0.95rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.64);
+  border: 1px solid var(--line);
+}
+
+.toggle-card input {
+  width: auto;
+}
+
+.policy-editor-textarea {
+  min-height: 300px;
+}
+
+.policy-hint {
+  border-radius: 18px;
+  padding: 0.9rem 1rem;
+  background: rgba(52, 86, 117, 0.06);
+  border: 1px solid rgba(52, 86, 117, 0.1);
+  color: var(--ink-soft);
+}
+
 @media (max-width: 1180px) {
   .app-shell,
   .workspace-grid,
   .admin-layout,
-  .brief-grid {
+  .brief-grid,
+  .policy-layout {
     grid-template-columns: 1fr;
   }
 
@@ -833,6 +951,10 @@ ul {
   .topbar-meta {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .policy-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1050,6 +1172,10 @@ ul {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.25rem;
+  }
+
+  .toggle-row {
+    display: grid;
   }
 
   .brief-url-card {

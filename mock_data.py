@@ -44,6 +44,7 @@ def seed_policies() -> list[PolicyDocument]:
                 title=product["title"],
                 category=product["category"],
                 policy_text=policy_text,
+                policy_file=product["policy_file"],
                 min_business_years=product.get("min_business_years"),
                 min_turnover=product.get("min_turnover"),
                 required_collateral=product.get("required_collateral"),

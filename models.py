@@ -70,6 +70,7 @@ class PolicyDocument(BaseModel):
     title: str
     category: str
     policy_text: str
+    policy_file: str | None = None
     min_business_years: int | None = None
     min_turnover: float | None = None
     required_collateral: bool | None = None
@@ -140,6 +141,25 @@ class WorkspaceData(BaseModel):
     pipeline_result: PipelineResult | None = None
     tasks: list[Task]
     suggested_replies: list["SuggestedReply"] = Field(default_factory=list)
+
+
+class UpdatePolicyRequest(BaseModel):
+    title: str
+    category: str
+    policy_text: str
+    min_business_years: int | None = None
+    min_turnover: float | None = None
+    required_collateral: bool | None = None
+    requires_import_export_activity: bool | None = None
+    assigned_agent: Actor
+    next_action: str
+
+
+class PolicyUpdateResponse(BaseModel):
+    policy: PolicyDocument
+    reindexed: bool
+    persisted: bool
+    message: str
 
 
 class SuggestedReply(BaseModel):

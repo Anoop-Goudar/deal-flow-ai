@@ -23,6 +23,7 @@ async function request(path, options = {}) {
 
 export const api = {
   getClients: () => request("/clients"),
+  getPolicies: () => request("/policies"),
   getWorkspace: (clientId) => request(`/clients/${clientId}/workspace`),
   getReplySuggestions: (clientId) => request(`/clients/${clientId}/reply-suggestions`),
   addMessage: (payload) =>
@@ -39,6 +40,11 @@ export const api = {
     request(`/tasks/${taskId}`, {
       method: "PATCH",
       body: JSON.stringify({ status }),
+    }),
+  updatePolicy: (policyId, payload) =>
+    request(`/policies/${policyId}`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
     }),
   resetDemo: () =>
     request("/admin/reset", {

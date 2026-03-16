@@ -1,20 +1,24 @@
 import { useEffect, useState } from "react";
 import { api } from "./api";
 
-const pages = ["Agent Dashboard", "Client Portal", "Admin Page", "POC Brief"];
+const pages = ["Agent Dashboard", "Client Portal", "Policy Lab", "Admin Page", "POC Brief"];
 
 export default function App() {
   const [page, setPage] = useState("Agent Dashboard");
   const [clients, setClients] = useState([]);
+  const [policies, setPolicies] = useState([]);
   const [selectedClientId, setSelectedClientId] = useState("");
+  const [selectedPolicyId, setSelectedPolicyId] = useState("");
   const [workspace, setWorkspace] = useState(null);
   const [messageDraft, setMessageDraft] = useState("");
   const [clientDraft, setClientDraft] = useState("");
   const [conversationJson, setConversationJson] = useState("[]");
+  const [policyForm, setPolicyForm] = useState(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [busyLabel, setBusyLabel] = useState("");
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
 
   useEffect(() => {
     void refreshAll();
@@ -27,19 +31,35 @@ export default function App() {
   }, [clients, selectedClientId]);
 
   useEffect(() => {
+    if (!selectedPolicyId && policies.length > 0) {
+      setSelectedPolicyId(policies[0].policy_id);
+    }
+  }, [policies, selectedPolicyId]);
+
+  useEffect(() => {
     if (selectedClientId) {
       void refreshClient(selectedClientId);
     }
   }, [selectedClientId]);
 
+  useEffect(() => {
+    const selectedPolicy = policies.find((policy) => policy.policy_id === selectedPolicyId) || null;
+    setPolicyForm(selectedPolicy ? toPolicyForm(selectedPolicy) : null);
+  }, [policies, selectedPolicyId]);
+
   async function refreshAll() {
     setLoading(true);
     setError("");
+    setNotice("");
     try {
-      const nextClients = await api.getClients();
+      const [nextClients, nextPolicies] = await Promise.all([api.getClients(), api.getPolicies()]);
       setClients(nextClients);
+      setPolicies(nextPolicies);
       if (!selectedClientId && nextClients.length > 0) {
         setSelectedClientId(nextClients[0].client_id);
+      }
+      if (!selectedPolicyId && nextPolicies.length > 0) {
+        setSelectedPolicyId(nextPolicies[0].policy_id);
       }
     } catch (err) {
       setError(err.message);
@@ -82,6 +102,7 @@ export default function App() {
     setBusy(true);
     setBusyLabel("Running pipeline...");
     setError("");
+    setNotice("");
     clear("");
     const optimisticEvent = {
       timestamp: new Date().toISOString(),
@@ -123,6 +144,7 @@ export default function App() {
     setBusy(true);
     setBusyLabel("Running pipeline...");
     setError("");
+    setNotice("");
     try {
       const nextWorkspace = await api.runPipeline(selectedClientId);
       applyWorkspace(nextWorkspace);
@@ -138,6 +160,7 @@ export default function App() {
     setBusy(true);
     setBusyLabel("Updating task...");
     setError("");
+    setNotice("");
     try {
       await api.updateTask(taskId, status);
       await syncData(selectedClientId);
@@ -153,9 +176,48 @@ export default function App() {
     setBusy(true);
     setBusyLabel("Resetting demo...");
     setError("");
+    setNotice("");
     try {
       await api.resetDemo();
       await syncData(selectedClientId);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+      setBusyLabel("");
+    }
+  }
+
+  async function handlePolicySave() {
+    if (!selectedPolicyId || !policyForm) {
+      return;
+    }
+
+    setBusy(true);
+    setBusyLabel("Updating policy and RAG index...");
+    setError("");
+    setNotice("");
+    try {
+      const response = await api.updatePolicy(selectedPolicyId, {
+        ...policyForm,
+        title: policyForm.title.trim(),
+        category: policyForm.category.trim(),
+        policy_text: policyForm.policy_text.trim(),
+        min_business_years: policyForm.min_business_years === "" ? null : policyForm.min_business_years,
+        min_turnover: policyForm.min_turnover === "" ? null : policyForm.min_turnover,
+        next_action: policyForm.next_action.trim(),
+      });
+      setPolicies((currentPolicies) =>
+        currentPolicies.map((policy) =>
+          policy.policy_id === response.policy.policy_id ? response.policy : policy,
+        ),
+      );
+      setPolicyForm(toPolicyForm(response.policy));
+      setNotice(response.message);
+      if (selectedClientId) {
+        const nextWorkspace = await api.runPipeline(selectedClientId);
+        applyWorkspace(nextWorkspace);
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -269,6 +331,7 @@ export default function App() {
         </header>
 
         {error ? <div className="error-banner">{error}</div> : null}
+        {notice ? <div className="notice-banner">{notice}</div> : null}
         {loading ? <div className="loading-panel">Loading workspace...</div> : null}
 
         {!loading && page === "Agent Dashboard" ? (
@@ -299,6 +362,18 @@ export default function App() {
           />
         ) : null}
 
+        {!loading && page === "Policy Lab" ? (
+          <PolicyLab
+            policies={policies}
+            selectedPolicyId={selectedPolicyId}
+            setSelectedPolicyId={setSelectedPolicyId}
+            policyForm={policyForm}
+            setPolicyForm={setPolicyForm}
+            onSave={handlePolicySave}
+            busy={busy}
+          />
+        ) : null}
+
         {!loading && page === "Admin Page" ? (
           <AdminPage
             conversationJson={conversationJson}
@@ -314,6 +389,20 @@ export default function App() {
       </main>
     </div>
   );
+}
+
+function toPolicyForm(policy) {
+  return {
+    title: policy.title || "",
+    category: policy.category || "",
+    policy_text: policy.policy_text || "",
+    min_business_years: policy.min_business_years ?? "",
+    min_turnover: policy.min_turnover ?? "",
+    required_collateral: Boolean(policy.required_collateral),
+    requires_import_export_activity: Boolean(policy.requires_import_export_activity),
+    assigned_agent: policy.assigned_agent,
+    next_action: policy.next_action || "",
+  };
 }
 
 function AgentDashboard({
@@ -595,6 +684,160 @@ function AdminPage({ conversationJson, setConversationJson, pipelineResult, onRu
         <pre className="result-viewer">
           {pipelineResult ? JSON.stringify(pipelineResult, null, 2) : "No pipeline result yet."}
         </pre>
+      </div>
+    </section>
+  );
+}
+
+function PolicyLab({
+  policies,
+  selectedPolicyId,
+  setSelectedPolicyId,
+  policyForm,
+  setPolicyForm,
+  onSave,
+  busy,
+}) {
+  const selectedPolicy = policies.find((policy) => policy.policy_id === selectedPolicyId) || null;
+
+  function updateField(field, value) {
+    setPolicyForm((current) => (current ? { ...current, [field]: value } : current));
+  }
+
+  return (
+    <section className="single-page policy-layout">
+      <div className="panel policy-sidebar-panel">
+        <div className="panel-header">
+          <div>
+            <p className="eyebrow">RAG Demo</p>
+            <h3>Policy Library</h3>
+          </div>
+        </div>
+        <div className="policy-list">
+          {policies.map((policy) => (
+            <button
+              key={policy.policy_id}
+              type="button"
+              className={`policy-button ${policy.policy_id === selectedPolicyId ? "active" : ""}`}
+              onClick={() => setSelectedPolicyId(policy.policy_id)}
+            >
+              <strong>{policy.product}</strong>
+              <span>{policy.title}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="panel wide-panel">
+        <div className="panel-header">
+          <div>
+            <p className="eyebrow">Policy Editor</p>
+            <h3>{selectedPolicy?.product || "Select a policy"}</h3>
+          </div>
+          <button type="button" onClick={onSave} disabled={busy || !policyForm}>
+            Save And Reindex
+          </button>
+        </div>
+
+        {policyForm ? (
+          <div className="policy-editor">
+            <div className="policy-grid">
+              <label>
+                <span>Title</span>
+                <input
+                  value={policyForm.title}
+                  onChange={(event) => updateField("title", event.target.value)}
+                />
+              </label>
+              <label>
+                <span>Category</span>
+                <input
+                  value={policyForm.category}
+                  onChange={(event) => updateField("category", event.target.value)}
+                />
+              </label>
+              <label>
+                <span>Minimum Business Years</span>
+                <input
+                  type="number"
+                  min="0"
+                  value={policyForm.min_business_years}
+                  onChange={(event) =>
+                    updateField("min_business_years", event.target.value === "" ? "" : Number(event.target.value))
+                  }
+                />
+              </label>
+              <label>
+                <span>Minimum Turnover</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="1000"
+                  value={policyForm.min_turnover}
+                  onChange={(event) =>
+                    updateField("min_turnover", event.target.value === "" ? "" : Number(event.target.value))
+                  }
+                />
+              </label>
+              <label>
+                <span>Assigned Agent</span>
+                <select
+                  value={policyForm.assigned_agent}
+                  onChange={(event) => updateField("assigned_agent", event.target.value)}
+                >
+                  <option value="relationship_manager">Relationship Manager</option>
+                  <option value="loan_specialist">Loan Specialist</option>
+                  <option value="credit_card_specialist">Credit Card Specialist</option>
+                  <option value="trade_finance_specialist">Trade Finance Specialist</option>
+                </select>
+              </label>
+              <label>
+                <span>Next Action</span>
+                <input
+                  value={policyForm.next_action}
+                  onChange={(event) => updateField("next_action", event.target.value)}
+                />
+              </label>
+            </div>
+
+            <div className="toggle-row">
+              <label className="toggle-card">
+                <input
+                  type="checkbox"
+                  checked={policyForm.required_collateral}
+                  onChange={(event) => updateField("required_collateral", event.target.checked)}
+                />
+                <span>Require collateral</span>
+              </label>
+              <label className="toggle-card">
+                <input
+                  type="checkbox"
+                  checked={policyForm.requires_import_export_activity}
+                  onChange={(event) =>
+                    updateField("requires_import_export_activity", event.target.checked)
+                  }
+                />
+                <span>Require import/export activity</span>
+              </label>
+            </div>
+
+            <label className="policy-text-label">
+              <span>Policy Document Text</span>
+              <textarea
+                className="policy-editor-textarea"
+                value={policyForm.policy_text}
+                onChange={(event) => updateField("policy_text", event.target.value)}
+              />
+            </label>
+
+            <div className="policy-hint">
+              Save updates the document, refreshes the RAG index, and reruns analysis for the selected client so
+              retrieval changes are visible immediately.
+            </div>
+          </div>
+        ) : (
+          <div className="empty-state">Select a policy to edit the RAG source documents.</div>
+        )}
       </div>
     </section>
   );

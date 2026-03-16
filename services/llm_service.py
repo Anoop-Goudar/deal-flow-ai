@@ -70,10 +70,11 @@ class LLMService:
                 normalized = self._normalize_attribute_payload(payload)
                 if normalized is not None:
                     try:
-                        return ExtractedAttributes.model_validate(normalized)
+                        extracted = ExtractedAttributes.model_validate(normalized)
+                        return self._overlay_conversation_facts(extracted, conversation_text)
                     except ValidationError:
                         pass
-        return self._mock_extract_attributes(conversation_text)
+        return self._overlay_conversation_facts(self._mock_extract_attributes(conversation_text), conversation_text)
 
     def _parse_json_payload(self, text: str) -> dict[str, Any] | None:
         try:
@@ -249,6 +250,93 @@ class LLMService:
         if isinstance(value, list):
             return ", ".join(str(item) for item in value)
         return str(value)
+
+    def _overlay_conversation_facts(
+        self,
+        extracted: ExtractedAttributes,
+        conversation_text: str,
+    ) -> ExtractedAttributes:
+        lower_text = conversation_text.lower()
+        updates: dict[str, Any] = {}
+
+        turnover = self._extract_latest_amount(lower_text)
+        if turnover is not None:
+            updates["business_turnover"] = turnover
+            updates["annual_revenue"] = turnover
+
+        latest_years = self._extract_latest_years(lower_text)
+        if latest_years is not None:
+            updates["business_years"] = latest_years
+
+        collateral = self._extract_collateral_signal(lower_text)
+        if collateral is not None:
+            updates["collateral_available"] = collateral
+
+        import_export = self._extract_import_export_signal(lower_text)
+        if import_export is not None:
+            updates["import_export_activity"] = import_export
+
+        notes = list(extracted.notes)
+        if "fleet" in lower_text and "Client mentioned fleet expansion" not in notes:
+            notes.append("Client mentioned fleet expansion")
+        if any(word in lower_text for word in ["import", "export"]) and "Client mentioned export or import activity" not in notes:
+            notes.append("Client mentioned export or import activity")
+        updates["notes"] = notes
+
+        return extracted.model_copy(update=updates)
+
+    def _extract_latest_amount(self, text: str) -> float | None:
+        matches = list(
+            re.finditer(
+                r"\$?\s*([0-9]+(?:\.[0-9]+)?)\s*(crore|crores|cr|crs|lakh|lakhs|lac|lacs|m|million)\b",
+                text,
+            )
+        )
+        if matches:
+            value = float(matches[-1].group(1))
+            unit = matches[-1].group(2)
+            if unit in {"crore", "crores", "cr", "crs"}:
+                return value * 10_000_000
+            if unit in {"lakh", "lakhs", "lac", "lacs"}:
+                return value * 100_000
+            return value * 1_000_000
+
+        raw_matches = list(
+            re.finditer(
+                r"(?:turnover|revenue|annual turnover|annual revenue)[^0-9$]{0,24}\$?\s*([0-9]+(?:\.[0-9]+)?)\b",
+                text,
+            )
+        )
+        if raw_matches:
+            return float(raw_matches[-1].group(1))
+        return None
+
+    def _extract_latest_years(self, text: str) -> int | None:
+        matches = list(
+            re.finditer(
+                r"(?:operated|operating|operation|in business|business for|been operating for|years in operation)[^0-9]{0,24}([0-9]+(?:\.[0-9]+)?)\s*years?\b",
+                text,
+            )
+        )
+        if not matches:
+            matches = list(re.finditer(r"([0-9]+(?:\.[0-9]+)?)\s*years?\b", text))
+        if matches:
+            return int(float(matches[-1].group(1)))
+        return None
+
+    def _extract_collateral_signal(self, text: str) -> bool | None:
+        if any(phrase in text for phrase in ["cannot provide collateral", "no collateral", "without collateral"]):
+            return False
+        if "collateral" in text:
+            return True
+        return None
+
+    def _extract_import_export_signal(self, text: str) -> bool | None:
+        if any(phrase in text for phrase in ["no export", "no imports", "no import", "domestic only"]):
+            return False
+        if any(word in text for word in ["import", "export"]):
+            return True
+        return None
 
     def _mock_analyze_conversation(self, conversation_text: str) -> NeedAnalysisResult:
         lower_text = conversation_text.lower()
