@@ -44,7 +44,8 @@ body {
 }
 
 button,
-textarea {
+textarea,
+select {
   font: inherit;
 }
 
@@ -240,6 +241,14 @@ button:disabled {
   margin-bottom: 0.9rem;
 }
 
+.topbar-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
 .page-nav.inline {
   display: inline-flex;
   gap: 0.45rem;
@@ -273,6 +282,29 @@ button:disabled {
 .topbar-client strong {
   color: var(--ink);
   font-size: 1rem;
+}
+
+.mobile-client-picker {
+  display: none;
+}
+
+.mobile-client-picker span {
+  display: block;
+  margin-bottom: 0.24rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.mobile-client-picker select {
+  width: 100%;
+  min-width: 0;
+  border-radius: 14px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 251, 246, 0.96);
+  color: var(--ink);
+  padding: 0.72rem 0.9rem;
 }
 
 .hero {
@@ -486,6 +518,7 @@ button:disabled {
   padding: 0.95rem 1rem;
   border: 1px solid var(--line);
   max-width: 88%;
+  word-break: break-word;
 }
 
 .message-card.client {
@@ -783,6 +816,10 @@ ul {
     border-bottom: 1px solid var(--line);
   }
 
+  .client-list {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
   .hero,
   .topbar {
     flex-direction: column;
@@ -792,31 +829,240 @@ ul {
   .hero-stats {
     width: 100%;
   }
+
+  .topbar-meta {
+    width: 100%;
+    justify-content: space-between;
+  }
 }
 
 @media (max-width: 720px) {
+  body {
+    background:
+      radial-gradient(circle at top left, rgba(182, 111, 58, 0.06), transparent 20%),
+      linear-gradient(180deg, #faf7f2 0%, var(--bg) 100%);
+  }
+
   .main-panel,
   .sidebar {
-    padding: 0.85rem;
+    padding: 0.8rem;
+  }
+
+  .app-shell {
+    display: block;
+    min-height: auto;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .main-panel {
+    width: 100%;
+    max-width: none;
+    padding: 0.75rem;
+  }
+
+  .brand-card {
+    padding: 1rem;
+  }
+
+  .brand-card h1 {
+    font-size: 1.45rem;
+  }
+
+  .sidebar-card {
+    display: none;
+  }
+
+  .topbar {
+    margin-bottom: 0.7rem;
+    gap: 0.7rem;
+  }
+
+  .page-nav.inline {
+    width: calc(100vw - 1.5rem);
+    margin: 0 -0.05rem;
+    border-radius: 18px;
+    padding: 0.2rem;
+  }
+
+  .page-tab {
+    padding: 0.56rem 0.82rem;
+    font-size: 0.92rem;
+  }
+
+  .topbar-meta {
+    width: 100%;
+    flex-direction: row;
+    align-items: end;
+    justify-content: space-between;
+    gap: 0.65rem;
+  }
+
+  .topbar-client {
+    display: none;
   }
 
   .hero h2 {
-    font-size: 1.9rem;
+    font-size: 1.55rem;
+    line-height: 1;
   }
 
-  .hero-stats,
+  .hero {
+    padding: 0.95rem;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+    border-radius: 22px;
+  }
+
+  .hero-copy {
+    font-size: 0.98rem;
+    line-height: 1.4;
+  }
+
+  .hero-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.45rem;
+  }
+
+  .stat-card {
+    min-width: 0;
+    padding: 0.7rem 0.72rem;
+    border-radius: 15px;
+  }
+
+  .stat-card strong {
+    font-size: 1rem;
+  }
+
   .detail-grid {
     grid-template-columns: 1fr;
   }
 
   .task-card,
   .recommendation-head,
-  .panel-header {
+  .panel-header,
+  .stake-hero-grid,
+  .story-step {
     flex-direction: column;
   }
 
   .page-nav.inline {
-    width: 100%;
     overflow: auto;
+    padding-bottom: 0.35rem;
+    scrollbar-width: none;
+  }
+
+  .page-nav.inline::-webkit-scrollbar {
+    display: none;
+  }
+
+  .page-tab {
+    flex: 0 0 auto;
+  }
+
+  .mobile-client-picker {
+    display: block;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .message-card {
+    max-width: 100%;
+    padding: 0.85rem 0.9rem;
+  }
+
+  .chat-thread,
+  .recommendation-stack,
+  .task-stack,
+  .suggestion-list,
+  .brief-grid,
+  .storyline {
+    gap: 0.65rem;
+  }
+
+  .recommendation-card,
+  .task-card,
+  .panel,
+  .brand-card,
+  .summary-card,
+  .summary-banner {
+    border-radius: 18px;
+  }
+
+  .panel {
+    padding: 0.95rem;
+  }
+
+  .panel-header {
+    margin-bottom: 0.8rem;
+  }
+
+  .conversation-panel,
+  .insights-panel,
+  .wide-panel {
+    min-width: 0;
+  }
+
+  .recommendation-card h4,
+  .task-card h4,
+  .panel h3 {
+    font-size: 1.02rem;
+  }
+
+  .recommendation-details {
+    gap: 0.62rem;
+  }
+
+  .task-card.compact {
+    align-items: stretch;
+  }
+
+  .task-actions {
+    width: 100%;
+    min-width: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .task-actions button,
+  .composer button,
+  .action-row button {
+    width: 100%;
+  }
+
+  .composer {
+    position: sticky;
+    bottom: 0.65rem;
+    padding: 0.8rem;
+    margin: 0 -0.2rem -0.1rem;
+    border-radius: 20px;
+    background: rgba(245, 241, 234, 0.96);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--line);
+  }
+
+  textarea {
+    min-height: 96px;
+  }
+
+  .suggestion-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .brief-url-card {
+    width: 100%;
+  }
+
+  .brief-url-card strong {
+    overflow-wrap: anywhere;
+  }
+
+  .story-step {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
   }
 }

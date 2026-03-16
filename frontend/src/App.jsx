@@ -225,12 +225,29 @@ export default function App() {
               </button>
             ))}
           </div>
-          {selectedClient ? (
-            <div className="topbar-client">
-              <span>{selectedClient.client_id}</span>
-              <strong>{selectedClient.name}</strong>
-            </div>
-          ) : null}
+          <div className="topbar-meta">
+            {clients.length > 0 ? (
+              <label className="mobile-client-picker">
+                <span>Client</span>
+                <select
+                  value={selectedClientId}
+                  onChange={(event) => setSelectedClientId(event.target.value)}
+                >
+                  {clients.map((client) => (
+                    <option key={client.client_id} value={client.client_id}>
+                      {client.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
+            {selectedClient ? (
+              <div className="topbar-client">
+                <span>{selectedClient.client_id}</span>
+                <strong>{selectedClient.name}</strong>
+              </div>
+            ) : null}
+          </div>
         </div>
 
         <header className="hero">
