@@ -380,6 +380,12 @@ button:disabled {
     linear-gradient(180deg, #fffbf6 0%, #f9f2e8 100%);
 }
 
+.architecture-hero {
+  background:
+    radial-gradient(circle at top left, rgba(52, 86, 117, 0.14), transparent 30%),
+    linear-gradient(180deg, #fbfcfd 0%, #eef3f7 100%);
+}
+
 .stake-hero-grid {
   display: flex;
   justify-content: space-between;
@@ -488,6 +494,37 @@ button:disabled {
 .story-step p {
   margin: 0;
   color: var(--ink-soft);
+}
+
+.architecture-flow {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.architecture-node,
+.architecture-outcome {
+  border-radius: 24px;
+  padding: 1rem 1.05rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: 0 14px 40px rgba(32, 45, 58, 0.05);
+}
+
+.architecture-arrow {
+  justify-self: center;
+  color: var(--ink-soft);
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.architecture-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.architecture-card {
+  height: 100%;
 }
 
 .admin-layout {
@@ -728,9 +765,33 @@ select {
   align-items: center;
 }
 
+.task-body {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.task-owner-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.task-owner-label {
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+
 .task-card p {
   margin: 0.16rem 0 0.55rem;
   color: var(--ink-soft);
+}
+
+.ghost-badge.strong {
+  background: rgba(52, 86, 117, 0.12);
+  color: var(--ink);
 }
 
 .task-actions {
@@ -747,6 +808,12 @@ select {
 
 .task-header {
   margin-bottom: 0.8rem;
+}
+
+.task-subtitle {
+  margin: 0.22rem 0 0;
+  color: var(--ink-soft);
+  max-width: 42rem;
 }
 
 .status-badge.good {
@@ -921,7 +988,8 @@ ul {
   .workspace-grid,
   .admin-layout,
   .brief-grid,
-  .policy-layout {
+  .policy-layout,
+  .architecture-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1184,6 +1252,12 @@ ul {
 
   .brief-url-card strong {
     overflow-wrap: anywhere;
+  }
+
+  .architecture-node,
+  .architecture-outcome {
+    border-radius: 18px;
+    padding: 0.95rem;
   }
 
   .story-step {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "./api";
 
-const pages = ["Agent Dashboard", "Client Portal", "Policy Lab", "Admin Page", "POC Brief"];
+const pages = ["Agent Dashboard", "Client Portal", "Policy Lab", "Admin Page", "POC Brief", "System Architecture"];
 
 export default function App() {
   const [page, setPage] = useState("Agent Dashboard");
@@ -386,6 +386,8 @@ export default function App() {
         ) : null}
 
         {!loading && page === "POC Brief" ? <PocBrief /> : null}
+
+        {!loading && page === "System Architecture" ? <SystemArchitecture /> : null}
       </main>
     </div>
   );
@@ -556,13 +558,18 @@ function AgentDashboard({
               <div>
                 <p className="eyebrow">Execution</p>
                 <h3>Task Board</h3>
+                <p className="task-subtitle">Each task is auto-routed to the role best suited for the current eligibility state.</p>
               </div>
             </div>
             <div className="task-stack compact">
               {tasks.map((task) => (
                 <article key={task.task_id} className="task-card compact">
-                  <div>
+                  <div className="task-body">
                     <h4>{task.product}</h4>
+                    <div className="task-owner-row">
+                      <span className="task-owner-label">Assigned To</span>
+                      <span className="ghost-badge strong">{formatActor(task.assigned_to)}</span>
+                    </div>
                     <p>{task.action}</p>
                     <span className={`status-badge ${statusClass(task.status)}`}>{task.status}</span>
                   </div>
@@ -1010,6 +1017,143 @@ function PocBrief() {
   );
 }
 
+function SystemArchitecture() {
+  return (
+    <section className="single-page architecture-page">
+      <div className="panel brief-hero architecture-hero">
+        <div className="stake-hero-grid">
+          <div>
+            <p className="eyebrow">System View</p>
+            <h3>How DealFlow AI Works</h3>
+            <p className="brief-intro">
+              The application combines conversation capture, LLM analysis, grounded retrieval, rule-based
+              eligibility, and task routing into a single workflow that is easy to demo and explain.
+            </p>
+          </div>
+          <div className="brief-url-card">
+            <span>Architecture Style</span>
+            <strong>React + FastAPI + LLM + RAG</strong>
+          </div>
+        </div>
+      </div>
+
+      <div className="architecture-flow">
+        <div className="architecture-node">
+          <p className="eyebrow">1. User Interface</p>
+          <h3>React Frontend</h3>
+          <p>Relationship managers, clients, and demo viewers interact through the browser-based app.</p>
+          <ul className="brief-list">
+            <li>Agent Dashboard</li>
+            <li>Client Portal</li>
+            <li>Policy Lab</li>
+            <li>POC Brief and Architecture pages</li>
+          </ul>
+        </div>
+
+        <div className="architecture-arrow">↓</div>
+
+        <div className="architecture-node">
+          <p className="eyebrow">2. API Layer</p>
+          <h3>FastAPI Backend</h3>
+          <p>The backend receives messages, runs the AI pipeline, returns workspace data, and exposes policy APIs.</p>
+          <ul className="brief-list">
+            <li>Message ingestion</li>
+            <li>Workspace retrieval</li>
+            <li>Task updates</li>
+            <li>Policy editing and reindexing</li>
+          </ul>
+        </div>
+
+        <div className="architecture-arrow">↓</div>
+
+        <div className="architecture-grid">
+          <div className="panel architecture-card">
+            <p className="eyebrow">3A. Understanding</p>
+            <h3>LLM Analysis</h3>
+            <p>The LLM reads the full conversation to summarize intent, detect financial needs, and extract facts.</p>
+            <ul className="brief-list">
+              <li>Conversation summary</li>
+              <li>Product need detection</li>
+              <li>Attribute extraction</li>
+              <li>Suggested replies</li>
+            </ul>
+          </div>
+
+          <div className="panel architecture-card">
+            <p className="eyebrow">3B. Grounding</p>
+            <h3>RAG Retrieval Layer</h3>
+            <p>Policy documents are chunked, embedded, indexed, and retrieved so recommendations stay grounded.</p>
+            <ul className="brief-list">
+              <li>Policy chunking</li>
+              <li>Embedding generation</li>
+              <li>Similarity scoring</li>
+              <li>Top policy match returned to UI</li>
+            </ul>
+          </div>
+
+          <div className="panel architecture-card">
+            <p className="eyebrow">3C. Decisioning</p>
+            <h3>Eligibility Engine</h3>
+            <p>Structured client facts are checked against policy rules such as tenure, turnover, and collateral.</p>
+            <ul className="brief-list">
+              <li>Eligible</li>
+              <li>Not eligible</li>
+              <li>Eligibility incomplete</li>
+            </ul>
+          </div>
+
+          <div className="panel architecture-card">
+            <p className="eyebrow">3D. Execution</p>
+            <h3>Task Router</h3>
+            <p>Once a recommendation is formed, the system creates the next action and routes it to the right role.</p>
+            <ul className="brief-list">
+              <li>Loan specialist</li>
+              <li>Trade finance specialist</li>
+              <li>Credit card specialist</li>
+              <li>Relationship manager fallback</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="architecture-arrow">↓</div>
+
+        <div className="panel architecture-outcome">
+          <p className="eyebrow">4. Output</p>
+          <h3>Decision + Action Workspace</h3>
+          <p>
+            The final workspace shows the conversation, AI summary, grounded policy match, eligibility status,
+            suggested replies, and routed task board in one view.
+          </p>
+        </div>
+      </div>
+
+      <div className="brief-grid">
+        <div className="panel">
+          <p className="eyebrow">Live Demo Hook</p>
+          <h3>Why Policy Lab Matters</h3>
+          <ul className="brief-list">
+            <li>You can edit policy text and rule thresholds live.</li>
+            <li>The app rebuilds the RAG index immediately.</li>
+            <li>Rerunning the pipeline updates both retrieval evidence and eligibility decisions.</li>
+            <li>This makes the RAG implementation easy to demonstrate to stakeholders.</li>
+          </ul>
+        </div>
+
+        <div className="panel">
+          <p className="eyebrow">State Model</p>
+          <h3>Current POC Storage</h3>
+          <ul className="brief-list">
+            <li>Clients, conversations, tasks, and recommendations are held in memory.</li>
+            <li>Policy source files can be edited locally through Policy Lab.</li>
+            <li>Vector chunks are regenerated after policy updates.</li>
+            <li>The current design is optimized for demo clarity rather than production persistence.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function StatCard({ label, value }) {
   return (
     <div className="stat-card">
@@ -1034,4 +1178,8 @@ function statusClass(value) {
     return "progress";
   }
   return "warn";
+}
+
+function formatActor(value) {
+  return value.replaceAll("_", " ");
 }
