@@ -892,6 +892,7 @@ function PocBrief() {
             <li>It retrieves policy context before forming a recommendation.</li>
             <li>It checks whether the client is eligible, not eligible, or incomplete.</li>
             <li>It produces the next recommended action and routes a task to the right role.</li>
+            <li>Teams can edit policy documents live in Policy Lab and immediately see RAG and eligibility updates.</li>
             <li>It suggests agent replies that reflect the latest conversation state.</li>
           </ul>
         </div>
@@ -924,6 +925,13 @@ function PocBrief() {
             <div className="story-step">
               <span>4</span>
               <div>
+                <strong>Policy changes can be tested live</strong>
+                <p>Using Policy Lab, a rule can be changed and the retrieved evidence updates on the next analysis run.</p>
+              </div>
+            </div>
+            <div className="story-step">
+              <span>5</span>
+              <div>
                 <strong>Next action is generated</strong>
                 <p>Specialist routing or relationship-manager follow-up is created automatically.</p>
               </div>
@@ -941,6 +949,9 @@ function PocBrief() {
             </li>
             <li>
               <strong>Client Portal</strong>: demonstrates how client messages change the decisioning in real time.
+            </li>
+            <li>
+              <strong>Policy Lab</strong>: demonstrates live policy editing, reindexing, and grounded retrieval updates.
             </li>
             <li>
               <strong>Admin Page</strong>: useful for resetting the demo and rerunning analysis.
@@ -966,6 +977,9 @@ function PocBrief() {
             <li>
               <strong>Criteria question</strong>: “What’s the criteria?”
             </li>
+            <li>
+              <strong>Live RAG change</strong>: change Vehicle Loan from 2 years to 1 year in Policy Lab, save, and rerun to show the retrieved policy text and eligibility result both update.
+            </li>
           </ul>
         </div>
 
@@ -975,6 +989,7 @@ function PocBrief() {
           <ul className="brief-list">
             <li>The recommendation feels believable and grounded in policy.</li>
             <li>The eligibility result changes when the client shares new facts.</li>
+            <li>The retrieved policy text changes when a policy document is edited in Policy Lab.</li>
             <li>The next action changes when the case becomes incomplete or ineligible.</li>
             <li>The suggested replies feel like a practical banker aid rather than a generic chatbot.</li>
           </ul>
