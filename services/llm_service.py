@@ -312,16 +312,16 @@ class LLMService:
         return None
 
     def _extract_latest_years(self, text: str) -> int | None:
-        matches = list(
-            re.finditer(
-                r"(?:operated|operating|operation|in business|business for|been operating for|years in operation)[^0-9]{0,24}([0-9]+(?:\.[0-9]+)?)\s*years?\b",
-                text,
-            )
-        )
-        if not matches:
-            matches = list(re.finditer(r"([0-9]+(?:\.[0-9]+)?)\s*years?\b", text))
+        patterns = [
+            r"(?:operated|operating|operation|in business|business for|been operating for|years in operation|working from|working for|running for)[^0-9]{0,24}([0-9]+(?:\.[0-9]+)?)\s*years?\b",
+            r"([0-9]+(?:\.[0-9]+)?)\s*years?\b",
+        ]
+        matches = []
+        for pattern in patterns:
+            matches.extend(re.finditer(pattern, text))
         if matches:
-            return int(float(matches[-1].group(1)))
+            latest_match = max(matches, key=lambda match: match.end())
+            return int(float(latest_match.group(1)))
         return None
 
     def _extract_collateral_signal(self, text: str) -> bool | None:
